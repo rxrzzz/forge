@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.bento-gradient {
+    border-image: linear-gradient(to left, #D4E4BC, #36558F);
+    border-image-slice: 1;
+    border-width: 3px;
+}
+
