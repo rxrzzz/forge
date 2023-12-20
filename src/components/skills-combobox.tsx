@@ -3,15 +3,24 @@ import { skillsWithOptions } from "../data/skills";
 import { Dispatch, SetStateAction } from "react";
 import { SelectValue } from "antd/es/select";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
+import { useAuthStore } from "../store/auth_store";
 
 type Props = {
   setChosenSkills: Dispatch<SetStateAction<string[]>>;
+  setQueryParam: (name: string, value: string | string[]) => void;
   className: string;
+  registrationQueryParams: URLSearchParams;
 };
-export const SkillsCombobox = ({ setChosenSkills, className }: Props) => {
+export const SkillsCombobox = ({
+  setChosenSkills,
+  className,
+  setQueryParam,
+  registrationQueryParams,
+}: Props) => {
+  const {user} = useAuthStore();
   const handleChange = (value: SelectValue) => {
-    // Update the chosenSkills array
     setChosenSkills(value as string[]);
+    setQueryParam("skills", value as string[]);
   };
 
   const tagRender = (props: CustomTagProps) => {
@@ -47,6 +56,7 @@ export const SkillsCombobox = ({ setChosenSkills, className }: Props) => {
         onChange={handleChange}
         popupClassName="font-primary"
         options={skillsWithOptions}
+        defaultValue={registrationQueryParams.get("skills")?.split(",") ?? user.skills ?? []}
         className="hover:bg-tertiary focus:bg-tertiary"
       />
     </Space>

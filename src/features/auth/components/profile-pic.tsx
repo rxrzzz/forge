@@ -2,9 +2,14 @@ import { ColorPicker } from "antd";
 import { Color } from "antd/es/color-picker";
 import { useMemo, useState } from "react";
 import { useAuthStore } from "../../../store/auth_store";
-import { useSearchParams } from "react-router-dom";
-
-export const ProfilePic = () => {
+type Props = {
+  setQueryParam(name: string, value: string | string[]): void;
+  registrationQueryParams: URLSearchParams;
+};
+export const ProfilePic = ({
+  registrationQueryParams,
+  setQueryParam,
+}: Props) => {
   const styles = [
     "adventurer-neutral",
     "avataaars-neutral",
@@ -23,7 +28,6 @@ export const ProfilePic = () => {
   ] as const;
 
   const { user } = useAuthStore();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [backgroundColor, setBackgroundColor] = useState<Color | string>(
     "#fff"
   );
@@ -36,7 +40,7 @@ export const ProfilePic = () => {
   );
   const [style, setStyle] =
     useState<(typeof styles)[number]>("adventurer-neutral");
-  // https://api.dicebear.com/7.x/adventurer/svg
+  console.log(registrationQueryParams);
   return (
     <div>
       <h1 className="text-lg font-medium -mt-1">Choose a Profile Picture</h1>
@@ -74,9 +78,8 @@ export const ProfilePic = () => {
         <button
           className="bg-secondary rounded-md p-2"
           onClick={(e) => {
-            e.preventDefault()
-            setSearchParams({"user-registration-tab": "user-details"})
-            searchParams.set("user-registration-tab", "user-details");
+            e.preventDefault();
+            setQueryParam("user-registration-tab", "user-details");
           }}
         >
           Previous

@@ -3,13 +3,19 @@ import { Input } from "antd";
 import { useState } from "react";
 import { useAuthStore } from "../../../store/auth_store";
 import { SkillsCombobox } from "../../../components/skills-combobox";
-import { useSearchParams } from "react-router-dom";
 
-export default function UserDetails() {
+type Props = {
+  setQueryParam(name: string, value: string | string[]): void;
+  registrationQueryParams: URLSearchParams;
+};
+export default function UserDetails({
+  setQueryParam,
+  registrationQueryParams,
+}: Props) {
   const { user } = useAuthStore();
   const { TextArea } = Input;
   const [chosenSkills, setChosenSkills] = useState<string[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+
   return (
     <>
       <form>
@@ -19,7 +25,10 @@ export default function UserDetails() {
         </label>
         <Input
           type="text"
-          defaultValue={user.name}
+          onChange={(e) => {
+            setQueryParam("name", e.target.value);
+          }}
+          defaultValue={registrationQueryParams.get("name") ?? user.name}
           name="name"
           className=" focus:border-secondary hover:border-secondary mb-4"
         />
@@ -28,6 +37,8 @@ export default function UserDetails() {
         </label>
         <TextArea
           autoSize
+          defaultValue={registrationQueryParams.get("bio") ?? user.bio}
+          onChange={(e) => setQueryParam("bio", e.target.value)}
           maxLength={300}
           placeholder="Enter a short description of yourself (max 300 characters)."
           name="bio"
@@ -40,6 +51,8 @@ export default function UserDetails() {
 
         <SkillsCombobox
           setChosenSkills={setChosenSkills}
+          registrationQueryParams={registrationQueryParams}
+          setQueryParam={setQueryParam}
           className=" focus:border-secondary hover:border-secondary mb-4"
         />
       </form>
@@ -48,8 +61,7 @@ export default function UserDetails() {
           className="bg-secondary rounded-md p-2"
           onClick={(e) => {
             e.preventDefault();
-            setSearchParams({ "user-registration-tab": "profile-pic" });
-            searchParams.set("user-registration-tab", "profile-pic")
+            setQueryParam("user-registration-tab", "profile-pic");
           }}
         >
           Next
